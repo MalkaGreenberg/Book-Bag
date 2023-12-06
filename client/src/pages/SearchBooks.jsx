@@ -17,11 +17,21 @@ const SearchBooks = ({ books }) => {
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
   const [saveBook, { error }] = useMutation(SAVE_BOOK);
-  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
-  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
+
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
-  });
+  }, [savedBookIds]);
+
+  const [saved, setSaved] = useState({});
+
+  useEffect(() => {
+    // Update the saved state based on savedBookIds
+    const savedState = {};
+    savedBookIds.forEach((bookId) => {
+      savedState[bookId] = true;
+    });
+    setSaved(savedState);
+  }, [savedBookIds]);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -55,12 +65,10 @@ const SearchBooks = ({ books }) => {
     }
   };
 
-  // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
-    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -72,12 +80,20 @@ const SearchBooks = ({ books }) => {
         variables: { input: bookToSave },
       });
 
-      if (!data.ok) {
-        throw new Error('something went wrong!');
-      }
-
       // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, data.saveBook.bookId]);
+      console.log("saving the book "+ [...data.saveBook.savedBooks]);
+      setSavedBookIds([...data.saveBook.savedBooks]);
+
+      // Check if the savedBookIds array includes the current bookId
+      const isBookAlreadySaved = savedBookIds?.some((savedBookId) => savedBookId === bookId);
+
+      // Update the state based on whether the book is already saved
+      setSavedBookIds((prevSavedBookIds) => {
+        return isBookAlreadySaved ? prevSavedBookIds : [...prevSavedBookIds, bookId];
+      });
+
+      setSaved((prevSaved) => ({ ...prevSaved, [bookId]: true }));
+
     } catch (err) {
       console.error(err);
     }
@@ -133,9 +149,9 @@ const SearchBooks = ({ books }) => {
                         disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
                         className='btn-block btn-info'
                         onClick={() => handleSaveBook(book.bookId)}>
-                        {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
-                          ? 'This book has already been saved!'
-                          : 'Save this Book!'}
+                        {saved[book.bookId] 
+                        ? 'This book has already been saved!' 
+                        : 'Save this Book!'}
                       </Button>
                     )}
                   </Card.Body>

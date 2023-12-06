@@ -10,7 +10,7 @@ const resolvers = {
         const userData = await User
                     .findOne({ _id: context.user._id })
                     .select("-__v -password")
-                    .populate("books");
+                    .populate("savedBooks");
                 
                 return userData;
       }
@@ -45,6 +45,7 @@ const resolvers = {
     },
 
     saveBook: async (parent, { input }, context) => {
+      console.log('Context user:', context.user);
       if (context.user) {
         const updatedUser = await User.findByIdAndUpdate(
           context.user._id,

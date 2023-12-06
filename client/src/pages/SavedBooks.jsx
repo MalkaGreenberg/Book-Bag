@@ -14,10 +14,10 @@ import Auth from "../utils/auth";
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(QUERY_ME);
+  const { loading, data } = useQuery(GET_ME);
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
-  const userData = data?.me || {};
+  const userData = data?.me.savedBooks || [];
 
   // create function that accepts the book"s mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -31,14 +31,12 @@ const SavedBooks = () => {
       const { data } = await removeBook({
         variables: { bookId },
       });
-      // upon success, remove book"s id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // if data isn"t here yet, say so
   if (loading) {
     return <h2>LOADING...</h2>;
   }
@@ -52,12 +50,12 @@ const SavedBooks = () => {
       </div>
       <Container>
         <h2 className='pt-5'>
-          {userData.savedBooks.length
-            ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
+          {userData.length
+            ? `Viewing ${userData.length} saved ${userData.length === 1 ? 'book' : 'books'}:`
             : 'You have no saved books!'}
         </h2>
         <Row>
-          {userData.savedBooks.map((book) => {
+          {userData.map((book) => {
             return (
               <Col md="4">
                 <Card key={book.bookId} border='dark'>
