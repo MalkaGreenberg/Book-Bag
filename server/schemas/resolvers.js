@@ -15,6 +15,9 @@ const resolvers = {
       }
       throw AuthenticationError;
     },
+    user: async (parent, { username }) => {
+      return User.findOne({ username }).populate('savedBooks');
+    },
   },
 
   Mutation: {
@@ -47,9 +50,8 @@ const resolvers = {
       console.log('Context user:', context.user);
       if (context.user) {
         const updatedUser = await User.findByIdAndUpdate(
-          context.user._id,
-          { $push: { savedBooks: input } },
-          { new: true }
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: input } }
         ).populate('savedBooks');
 
         return updatedUser;

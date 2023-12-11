@@ -6,6 +6,7 @@ import Auth from '../utils/auth';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import { SAVE_BOOK } from '../utils/mutations';
 import { searchGoogleBooks } from '../utils/API';
+import { QUERY_USER } from '../utils/queries';
 
 const SearchBooks = ({ books }) => {
   // create state for holding returned google api data
@@ -16,7 +17,13 @@ const SearchBooks = ({ books }) => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [saveBook, { error }] = useMutation(SAVE_BOOK);
+  const [saveBook, { error }] = useMutation
+  (SAVE_BOOK, {
+    refetchQueries: [
+      QUERY_USER,
+      'user'
+    ]
+  });
 
   useEffect(() => {
     return () => saveBookIds(savedBookIds);

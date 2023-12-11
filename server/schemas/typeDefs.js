@@ -2,7 +2,10 @@
 const typeDefs = `
   type Query {
     me: User
+    user(username: String!): User
   }
+
+
 
   type Mutation {
     login(email: String!, password: String!): Auth
