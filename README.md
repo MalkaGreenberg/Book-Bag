@@ -30,8 +30,11 @@ User Authentication: The app supports user authentication, allowing users to cre
 Save and Remove Books: Logged-in users can save books to their account and remove them from their saved list.
 View Saved Books: Users can view a list of books they have saved, complete with details such as title, author, description, and an image.
 
+![Animation shows "star wars" typed into a search box and books about Star Wars appearing as results.](./Assets/21-mern-homework-demo-01.gif)
 
+![Animation shows user clicking "Save This Book!" button to save books that appear in search results. The button label changes to "Book Already Saved" after it is clicked and the book is saved.](./Assets/21-mern-homework-demo-02.gif)
 
+![The Viewing Lernantino's Books page shows the books that the user Lernaninto has saved.](./Assets/21-mern-homework-demo-03.gif)
 
 ## Contact Information
 Find me on github! Repo is below
